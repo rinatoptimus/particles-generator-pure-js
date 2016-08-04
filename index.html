@@ -1,0 +1,97 @@
+
+<!-- http://firstdev.org/post/programmirovanie/javascript/rabota-s-obektami-v-javascript-chast-2/ -->
+<html>
+<head>
+	<meta charset='UTF-8'>
+	<title>JavaScript</title>
+	<style>
+		#main{
+			border: 1px solid black;
+			width:600px;
+			height:600px;
+			background: #EEE;
+			margin: 0 auto;
+			position: relative;
+			overflow: hidden
+		}
+		.act{
+			background: black;
+			width: 10px;
+			height: 10px;
+			position: absolute;
+		}
+		#first{
+			top: 100px;
+			left: 200px;
+		}
+	</style>
+</head>
+<body>
+	<p id = "stat"></p>
+	<div id = "main"></div>
+	<p align = "center"><button onclick = "add()">ADD</button></p>
+	<script>
+	/* Первым делом напишем свою функцию получения случайного числа. Эта функция нам понадобится для получения случайного цвета и для получения случайной высоты. */
+	function random(min, max)
+{
+	var res = Math.random() * (max - min) + min;
+	res = Math.round(res);
+	return res;
+}
+
+var obj = {
+	counter: 0, // счетчик объектов
+	colors: ['red', 'blue', 'green', 'yellow', 'purple', 'aqua', 'orange'], //перечисление цветов нашего объекта
+	speed: 100, // скорость движения объекта
+	addElem: function()
+	{
+		var mainEl = document.getElementById('main'); // получение игрового поля, по его Id
+		var divEl = document.createElement('div'); // создаем div
+		divEl.setAttribute('class', 'act'); // назначаем созданному div'у атрибуты
+		mainEl.appendChild(divEl); // добавляем его на игровое поле
+		var color = this.colors[random(0, this.colors.length - 1)]; // получаем случайный цвет
+		divEl.style.background = color; // задаем нашему div'у цвет фона
+		this.addClick(divEl); // добавляем обработчик на клик
+		this.move(divEl); // начинаем двигать div
+	},
+	move: function(elem)
+	{
+		var top = random(0, 580);
+		var left = 0;
+
+		elem.style.top = top + "px"; // задаем стартовую позицию
+		setInterval(function(){
+			left += 3;
+			elem.style.left = left + "px";
+			if( left >= 600 )
+			{
+				left = -60;
+			}
+		}, this.speed)
+		/*Задаем интервал, с которым будет передвигаться объект. Первый параметр - функция, передвигает объект с лева на право, 3px в секунду. Второй параметр - скорость передвижения*/
+	},
+	addClick: function(elem)
+	{
+		var scope = this; // передаем ссылку на объект
+		var pEl = document.getElementById('stat'); // получение поля подсчета игровой статистики
+		elem.onclick = function(){
+			var mainEl = document.getElementById('main'); // получение игрового поля, по его Id
+			mainEl.removeChild(elem); // удаляем объект по которому кликнули
+			scope.counter += 10; // увеличиваем счет на 10
+			pEl.innerHTML = "Результат: " + scope.counter; // выводим результат в код HTML
+			if(scope.counter == 100)
+			{
+				scope.speed -= 50; // уменьшаем скорость
+				scope.counter = 0; // обнуляем счетчик
+			}
+		}
+	}
+}
+
+function add()
+{
+	obj.addElem();
+}
+	</script>
+</body>
+</html>
